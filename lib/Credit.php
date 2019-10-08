@@ -158,11 +158,9 @@ class Credit
 
         $articles = [];
         if (!empty($where['articles'])) {
-            $sql->setQuery('SELECT id, clang_id, parent_id, name, catname, startarticle FROM '.\rex::getTable('article').' WHERE '.implode(' OR ', $where['articles']));
-            if ($sql->getRows() > 0) {
-                foreach ($sql->getArray() as $article) {
-                    $articles[] = \rex_article::get($article['id'], $article['clang_id']);
-                }
+            $items = $sql->getArray('SELECT id, clang_id, parent_id, name, catname, startarticle FROM '.\rex::getTable('article').' WHERE '.implode(' OR ', $where['articles']));
+            foreach ($items as $article) {
+                $articles[] = \rex_article::get($article['id'], $article['clang_id']);
             }
         }
 
@@ -204,17 +202,15 @@ class Credit
         $articles = [];
         foreach ($tables as $tableName => $conditions) {
             $items = $sql->getArray('SELECT `id` FROM '.$tableName.' WHERE '.implode(' OR ', $conditions));
-            if (count($items)) {
-                foreach ($items as $item) {
-                    $sqlData = \rex_sql::factory();
-                    $sqlData->setQuery('SELECT `name`, `description` FROM `'.\rex_yform_manager_table::table().'` WHERE `table_name` = "'.$tableName.'"');
-                    $moduleId = $sqlData->getValue('description');
+            foreach ($items as $item) {
+                $sqlData = \rex_sql::factory();
+                $sqlData->setQuery('SELECT `name`, `description` FROM `'.\rex_yform_manager_table::table().'` WHERE `table_name` = "'.$tableName.'"');
+                $moduleId = $sqlData->getValue('description');
 
-                    $sqlSlices = \rex_sql::factory();
-                    $slices = $sqlSlices->getArray('SELECT article_id, clang_id FROM '.\rex::getTable('article_slice') . ' WHERE module_id = :moduleId', ['moduleId' => $moduleId]);
+                $sqlSlices = \rex_sql::factory();
+                $slices = $sqlSlices->getArray('SELECT article_id, clang_id FROM '.\rex::getTable('article_slice') . ' WHERE module_id = :moduleId', ['moduleId' => $moduleId]);
 
-                    $articles[] = \rex_article::get($slices[0]['article_id'], $slices[0]['clang_id']);
-                }
+                $articles[] = \rex_article::get($slices[0]['article_id'], $slices[0]['clang_id']);
             }
         }
 
