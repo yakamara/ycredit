@@ -3,10 +3,10 @@ version: '0.0.0-dev'
 author: Thomas Blum
 supportpage:
 
-page:
-    title: YCredit
-    perm: admin[]
-    icon: rex-icon fa-balance-scale
+#page:
+#    title: YCredit
+#    perm: admin[]
+#    icon: rex-icon fa-balance-scale
 
 requires:
     redaxo: ^5.8
