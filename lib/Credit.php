@@ -111,7 +111,11 @@ class Credit
 
         $articles = [];
         foreach ($slices as $slice) {
-            $articles[] = \rex_article::get($slice['article_id'], $slice['clang_id']);
+            $article = \rex_article::get($slice['article_id'], $slice['clang_id']);
+            if (!$article->isOnline()) {
+                continue;
+            }
+            $articles[] = $article;
         }
 
         return $articles;
@@ -160,7 +164,11 @@ class Credit
         if (!empty($where['articles'])) {
             $items = $sql->getArray('SELECT id, clang_id, parent_id, name, catname, startarticle FROM '.\rex::getTable('article').' WHERE '.implode(' OR ', $where['articles']));
             foreach ($items as $article) {
-                $articles[] = \rex_article::get($article['id'], $article['clang_id']);
+                $article = \rex_article::get($article['id'], $article['clang_id']);
+                if (!$article->isOnline()) {
+                    continue;
+                }
+                $articles[] = $article;
             }
         }
 
@@ -210,7 +218,11 @@ class Credit
                 $sqlSlices = \rex_sql::factory();
                 $slices = $sqlSlices->getArray('SELECT article_id, clang_id FROM '.\rex::getTable('article_slice') . ' WHERE module_id = :moduleId', ['moduleId' => $moduleId]);
 
-                $articles[] = \rex_article::get($slices[0]['article_id'], $slices[0]['clang_id']);
+                $article = \rex_article::get($slices[0]['article_id'], $slices[0]['clang_id']);
+                if (!$article->isOnline()) {
+                    continue;
+                }
+                $articles[] = $article;
             }
         }
 
